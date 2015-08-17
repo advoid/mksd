@@ -1,3 +1,12 @@
 #!/bin/bash
 
+# Written 2015 by Johannes Findeisen <you@hanez.org>
 
+# 1. Partition SD card
+# 2. Format partitions
+# 3. wget Gentoo and extract it to / partition
+# 4. wget Raspbian Kernel and extract it to /boot partition
+# 5. Configure the Gentoo OS
+# 5.1 Network configuaration / enable eth0
+# 5.2 ...
+# 6. 
