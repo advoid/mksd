@@ -21,32 +21,39 @@ DEVICE=/dev/mmcblk0
 mkdir tmp
 
 # Create partitions:
-echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | fdisk ${DEVICE}
+echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | sudo fdisk ${DEVICE}
 
 # Prepare filesystems:
-mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
-mke2fs -F -t ext4 ${DEVICE}p2 -L ADVOID_ROOT
-mkswap ${DEVICE}p3
+sudo mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
+sudo mke2fs -F -t ext4 ${DEVICE}p2 -L ADVOID_ROOT
+sudo mkswap ${DEVICE}p3
 
 # Mount filesystems:
-mkdir /tmp/advoid
-mount ${DEVICE}p2 /tmp/advoid
-mkdir /tmp/advoid/boot
-mount ${DEVICE}p1 /tmp/advoid/boot
+sudo mkdir /tmp/advoid
+sudo mount ${DEVICE}p2 /tmp/advoid
+sudo mkdir /tmp/advoid/boot
+sudo mount ${DEVICE}p1 /tmp/advoid/boot
+
+cd tmp
 
 # Extract Gentoo
-# TODO!
+#wget http://advoid.net/files/stage3-armv6j_hardfp-20150730.tar.bz2
+sudo tar xfpj stage3-armv6j_hardfp-20150730.tar.bz2 -C /tmp/advoid/
+
+#wget http://advoid.net/files/portage-20150819.tar.bz2
+sudo tar xjf portage-20150819.tar.bz2 -C /tmp/advoid/usr
 
 # Install kernel
-#cd /tmp/
-#git clone --depth 1 git://github.com/raspberrypi/firmware/
-#cd firmware/boot
-#cp * /tmp/advoid/boot/
-#cp -r ../modules /tmp/advoid/lib/ 
+git clone --depth 1 git://github.com/advoid/firmware/
+cd firmware/boot
+sudo cp * /tmp/advoid/boot/
+sudo cp -r ../modules /tmp/advoid/lib/ 
+
+cd ../../../
 
 # Configure the system:
 
-mkdir /tmp/advoid/etc
+#mkdir /tmp/advoid/etc
 
 cat << EOF > /tmp/advoid/etc/fstab
 /dev/mmcblk0p1      /boot       auto        noauto,noatime  1 2
@@ -54,12 +61,12 @@ cat << EOF > /tmp/advoid/etc/fstab
 /dev/mmcblk0p3      none        swap        sw              0 0
 EOF
 
-touch /tmp/advoid/boot/test.touch
+sudo touch /tmp/advoid/boot/test.touch
 
 # ...
 
 # Cleanup:
-umount /tmp/advoid/boot
-umount /tmp/advoid
-rm -rf /tmp/advoid
+sudo umount /tmp/advoid/boot
+sudo umount /tmp/advoid
+sudo rm -rf /tmp/advoid
 
