@@ -84,6 +84,7 @@ EOF
 touch /tmp/advoid/boot/test.touch
 
 # Cleanup:
+echo "Cleaning up and unmounting filesystems"
 cd /tmp
 umount /tmp/advoid/boot
 umount /tmp/advoid
