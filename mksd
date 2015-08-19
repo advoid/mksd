@@ -18,6 +18,8 @@
 
 DEVICE=/dev/mmcblk0
 
+mkdir tmp
+
 # Create partitions:
 echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | fdisk ${DEVICE}
 
@@ -26,4 +28,38 @@ mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
 mke2fs -F -t ext4 ${DEVICE}p2 -L ADVOID_ROOT
 mkswap ${DEVICE}p3
 
+# Mount filesystems:
+mkdir /tmp/advoid
+mount ${DEVICE}p2 /tmp/advoid
+mkdir /tmp/advoid/boot
+mount ${DEVICE}p1 /tmp/advoid/boot
+
+# Extract Gentoo
+# TODO!
+
+# Install kernel
+#cd /tmp/
+#git clone --depth 1 git://github.com/raspberrypi/firmware/
+#cd firmware/boot
+#cp * /tmp/advoid/boot/
+#cp -r ../modules /tmp/advoid/lib/ 
+
+# Configure the system:
+
+mkdir /tmp/advoid/etc
+
+cat << EOF > /tmp/advoid/etc/fstab
+/dev/mmcblk0p1      /boot       auto        noauto,noatime  1 2
+/dev/mmcblk0p2      /           ext4        noatime         0 1
+/dev/mmcblk0p3      none        swap        sw              0 0
+EOF
+
+touch /tmp/advoid/boot/test.touch
+
 # ...
+
+# Cleanup:
+umount /tmp/advoid/boot
+umount /tmp/advoid
+rm -rf /tmp/advoid
+
