@@ -1,6 +1,11 @@
 #!/bin/bash
 
 # Written 2015 by Johannes Findeisen <you@hanez.org>
+# Licensed under the terms of the GPLv2 license.
+
+# This is actually just a place for brainstorming stuff...
+
+# This needs to run as root!!! I don't use sudo here.
 
 # 1. Partition SD card
 # 2. Format partitions
@@ -10,3 +15,15 @@
 # 5.1 Network configuaration / enable eth0
 # 5.2 ...
 # 6. 
+
+DEVICE=/dev/mmcblk0
+
+# Create partitions:
+echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | fdisk ${DEVICE}
+
+# Prepare filesystems:
+mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
+mke2fs -F -t ext4 ${DEVICE}p2 -L ADVOID_ROOT
+mkswap ${DEVICE}p3
+
+# ...
