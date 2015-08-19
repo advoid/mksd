@@ -25,7 +25,7 @@ echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | 
 
 # Prepare filesystems:
 sudo mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
-sudo mke2fs -F -t ext4 ${DEVICE}p2 -L ADVOID_ROOT
+sudo mke2fs -F -t ext4 -N 803200 ${DEVICE}p2 -L ADVOID_ROOT
 sudo mkswap ${DEVICE}p3
 
 # Mount filesystems:
