@@ -84,8 +84,9 @@ ln -s /etc/init.d/net.eth0 ../runlevels/boot/net.eth0
 echo "hostname=\"${HOSTNAME}\"" > ${TMPDIR}/etc/conf.d/hostname
 rm -f ../runlevels/boot/hwclock
 ln -s /etc/init.d/swclock ../runlevels/boot/swclock
+ln -s /etc/init.d/sshd ../runlevels/default/sshd
 
-# Enable TTY on ttyAMA0 for a serial interface to advoid. SSH will not be available by default!
+# Enable TTY on ttyAMA0 for a serial interface to advoid.
 echo "#Spawn a getty on Raspberry Pi serial line" >> ${TMPDIR}/etc/inittab
 echo "T0:23:respawn:/sbin/agetty -L ttyAMA0 115200 vt100" >> ${TMPDIR}/etc/inittab
 
