@@ -2,10 +2,10 @@
 
 # Written 2015 by Johannes Findeisen <you@hanez.org>
 # Licensed under the terms of the GPLv2 license.
-
-# This is actually just a place for brainstorming stuff...
-
-# This needs to run as root!!! I don't use sudo here.
+#
+# This needs to run as root!
+#
+# Use this only if you know what you're doing.
 
 DEVICE=/dev/mmcblk0
 HOSTNAME=advoid
