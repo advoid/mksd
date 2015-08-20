@@ -10,8 +10,8 @@
 DEVICE=/dev/mmcblk0
 HOSTNAME=advoid
 
-# Create partitions:
-echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nw" | fdisk ${DEVICE}
+# Create partitions: 
+echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nt\n1\nc\nt\n3\n82\nw" | fdisk ${DEVICE}
 
 # Prepare filesystems:
 mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
@@ -29,16 +29,29 @@ cd tmp
 
 # Extract Gentoo
 echo "Extracting Gentoo stage3"
-#wget http://advoid.net/files/stage3-armv6j_hardfp-20150730.tar.bz2
+if [ ! -f ./stage3-armv6j_hardfp-20150730.tar.bz2 ]
+then
+  echo "Downloading file..."
+  wget http://advoid.net/files/stage3-armv6j_hardfp-20150730.tar.bz2
+fi
+echo "Extracting file"
 tar xfpj stage3-armv6j_hardfp-20150730.tar.bz2 -C /tmp/advoid/
 
-echo "Extracting portage tree"
-#wget http://advoid.net/files/portage-20150819.tar.bz2
+echo "Extracting Portage tree"
+if [ ! -f ./portage-20150819.tar.bz2 ]
+then
+  echo "Downloading file..."
+  wget http://advoid.net/files/portage-20150819.tar.bz2
+fi
+echo "Extracting file"
 tar xjf portage-20150819.tar.bz2 -C /tmp/advoid/usr
 
 # Install kernel
 echo "Installing Kernel"
-#git clone --depth 1 git://github.com/advoid/firmware/
+if [ ! -f ./firmware ]
+then
+  git clone --depth 1 git://github.com/advoid/firmware/
+fi
 cd firmware/boot
 cp * /tmp/advoid/boot/
 cp -r ../modules /tmp/advoid/lib/ 
