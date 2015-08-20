@@ -9,6 +9,8 @@
 
 DEVICE=/dev/mmcblk0
 HOSTNAME=advoid
+TMPDIR=/tmp/advoid-$$
+TIMEZONE=Europe/Berlin
 
 # Create partitions: 
 echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nt\n1\nc\nt\n3\n82\nw" | fdisk ${DEVICE}
@@ -19,10 +21,10 @@ mke2fs -F -t ext4 -N 803200 ${DEVICE}p2 -L ADVOID_ROOT
 mkswap ${DEVICE}p3
 
 # Mount filesystems:
-mkdir /tmp/advoid
-mount ${DEVICE}p2 /tmp/advoid
-mkdir /tmp/advoid/boot
-mount ${DEVICE}p1 /tmp/advoid/boot
+mkdir ${TMPDIR}
+mount ${DEVICE}p2 ${TMPDIR}
+mkdir ${TMPDIR}/boot
+mount ${DEVICE}p1 ${TMPDIR}/boot
 
 mkdir tmp
 cd tmp
@@ -35,7 +37,7 @@ then
   wget http://advoid.net/files/stage3-armv6j_hardfp-20150730.tar.bz2
 fi
 echo "Extracting file"
-tar xfpj stage3-armv6j_hardfp-20150730.tar.bz2 -C /tmp/advoid/
+tar xfpj stage3-armv6j_hardfp-20150730.tar.bz2 -C ${TMPDIR}/
 
 echo "Extracting Portage tree"
 if [ ! -f ./portage-20150819.tar.bz2 ]
@@ -44,7 +46,7 @@ then
   wget http://advoid.net/files/portage-20150819.tar.bz2
 fi
 echo "Extracting file"
-tar xjf portage-20150819.tar.bz2 -C /tmp/advoid/usr
+tar xjf portage-20150819.tar.bz2 -C ${TMPDIR}/usr/
 
 # Install kernel
 echo "Installing Kernel"
@@ -53,53 +55,53 @@ then
   git clone --depth 1 git://github.com/advoid/firmware/
 fi
 cd firmware/boot
-cp * /tmp/advoid/boot/
-cp -r ../modules /tmp/advoid/lib/ 
+cp * ${TMPDIR}/boot/
+cp -r ../modules ${TMPDIR}/lib/ 
 
 # Configure the system:
 echo "Configuring the system"
 
 # /etc/fstab
-cat << EOF > /tmp/advoid/etc/fstab
+cat << EOF > ${TMPDIR}/etc/fstab
 /dev/mmcblk0p1      /boot       auto        noauto,noatime  1 2
 /dev/mmcblk0p2      /           ext4        noatime         0 1
 /dev/mmcblk0p3      none        swap        sw              0 0
 EOF
 
 # /boot/cmdline.txt
-cat << EOF > /tmp/advoid/boot/cmdline.txt
+cat << EOF > ${TMPDIR}/boot/cmdline.txt
 dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline smsc95xx.turbo_mode=N rootwait
 EOF
 
 # Timezone
-cp /tmp/advoid/usr/share/zoneinfo/Europe/Berlin /tmp/advoid/etc/localtime
-echo "Europe/Berlin" > /tmp/advoid/etc/timezone
+cp ${TMPDIR}/usr/share/zoneinfo/${TIMEZONE} ${TMPDIR}/etc/localtime
+echo ${TIMEZONE} > ${TMPDIR}/etc/timezone
 
 # Networking, hostname and swclock
-cd /tmp/advoid/etc/init.d/
+cd ${TMPDIR}/etc/init.d/
 cp net.lo net.eth0
 ln -s /etc/init.d/net.eth0 ../runlevels/boot/net.eth0
-echo "hostname=\"${HOSTNAME}\"" > /tmp/advoid/etc/conf.d/hostname
+echo "hostname=\"${HOSTNAME}\"" > ${TMPDIR}/etc/conf.d/hostname
 rm -f ../runlevels/boot/hwclock
 ln -s /etc/init.d/swclock ../runlevels/boot/swclock
 
 # Enable TTY on ttyAMA0 for a serial interface to advoid. SSH will not be available by default!
-echo "#Spawn a getty on Raspberry Pi serial line" >> /tmp/advoid/etc/inittab
-echo "T0:23:respawn:/sbin/agetty -L ttyAMA0 115200 vt100" >> /tmp/advoid/etc/inittab
+echo "#Spawn a getty on Raspberry Pi serial line" >> ${TMPDIR}/etc/inittab
+echo "T0:23:respawn:/sbin/agetty -L ttyAMA0 115200 vt100" >> ${TMPDIR}/etc/inittab
 
-cat << EOF > /tmp/advoid/boot/config.txt
+cat << EOF > ${TMPDIR}/boot/config.txt
 arm_freq=900
 core_freq=333
 sdram_freq=450
 over_voltage=2
 EOF
 
-touch /tmp/advoid/boot/test.touch
+touch ${TMPDIR}/boot/test.touch
 
 # Cleanup:
 echo "Cleaning up and unmounting filesystems"
 cd /tmp
-umount /tmp/advoid/boot
-umount /tmp/advoid
-rm -rf /tmp/advoid
+umount ${TMPDIR}/boot
+umount ${TMPDIR}
+rm -rf ${TMPDIR}
 
