@@ -9,7 +9,7 @@
 
 DEVICE=/dev/mmcblk0
 HOSTNAME=advoid
-TMPDIR=/tmp/advoid-$$
+TMPDIR=`mktemp -d --suffix=.$$`
 TIMEZONE=Europe/Berlin
 
 # Create partitions: 
