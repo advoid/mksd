@@ -11,9 +11,11 @@ DEVICE=/dev/mmcblk0
 HOSTNAME=advoid
 TMPDIR=`mktemp -d --suffix=.$$`
 TIMEZONE=Europe/Berlin
+BOOTSIZE=100M
+ROOTSIZE=2800M
 
 # Create partitions: 
-echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+100M\nn\np\n2\n\n+3200M\nn\np\n3\n\n\nt\n1\nc\nt\n3\n82\nw" | fdisk ${DEVICE}
+echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+${BOOTSIZE}\nn\np\n2\n\n+${ROOTSIZE}\nn\np\n3\n\n\nt\n1\nc\nt\n3\n82\nw" | fdisk ${DEVICE}
 
 # Prepare filesystems:
 mkfs.msdos -F 32 ${DEVICE}p1 -n ADVOID_BOOT
