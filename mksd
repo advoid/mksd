@@ -13,6 +13,10 @@ TMPDIR=`mktemp -d --suffix=.$$`
 TIMEZONE=Europe/Berlin
 BOOTSIZE=100M
 ROOTSIZE=2800M
+STAGE3DATE=20150730
+STAGE3SOURCE=http://advoid.net/files
+PORTAGEDATE=20150819
+PORTAGESOURCE=http://advoid.net/files
 
 # Create partitions: 
 echo -e "d\n\nd\n\nd\no\nn\np\n1\n\n+${BOOTSIZE}\nn\np\n2\n\n+${ROOTSIZE}\nn\np\n3\n\n\nt\n1\nc\nt\n3\n82\nw" | fdisk ${DEVICE}
@@ -33,26 +37,26 @@ cd tmp
 
 # Extract Gentoo
 echo "Extracting Gentoo stage3"
-if [ ! -f ./stage3-armv6j_hardfp-20150730.tar.bz2 ]
+if [ ! -f ./stage3-armv6j_hardfp-${STAGE3DATE}.tar.bz2 ]
 then
   echo "Downloading file..."
-  wget http://advoid.net/files/stage3-armv6j_hardfp-20150730.tar.bz2
+  wget ${STAGE3SOURCE}/stage3-armv6j_hardfp-${STAGE3DATE}.tar.bz2
 fi
 echo "Extracting file"
-tar xfpj stage3-armv6j_hardfp-20150730.tar.bz2 -C ${TMPDIR}/
+tar xfpj stage3-armv6j_hardfp-${STAGE3DATE}.tar.bz2 -C ${TMPDIR}/
 
 echo "Extracting Portage tree"
-if [ ! -f ./portage-20150819.tar.bz2 ]
+if [ ! -f ./portage-${PORTAGEDATE}.tar.bz2 ]
 then
   echo "Downloading file..."
-  wget http://advoid.net/files/portage-20150819.tar.bz2
+  wget ${PORTAGESOURCE}/portage-${PORTAGEDATE}.tar.bz2
 fi
 echo "Extracting file"
-tar xjf portage-20150819.tar.bz2 -C ${TMPDIR}/usr/
+tar xjf portage-${PORTAGEDATE}.tar.bz2 -C ${TMPDIR}/usr/
 
 # Install kernel
 echo "Installing Kernel"
-if [ ! -f ./firmware ]
+if [ ! -d ./firmware ]
 then
   git clone --depth 1 git://github.com/advoid/firmware/
 fi
