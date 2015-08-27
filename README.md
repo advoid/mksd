@@ -1,16 +1,16 @@
 The Gentoo Pi SD card maker
 ===========================
 
-Warning: This in a very early stage of development. THe code works but you can
+Warning: This in a very early stage of development. The code works but you can
 not rely on it. I will add reliability next...
 
-This script is partitioning, formating partitions, downloads a Raspbian Linux
-Kernel, downloads Gentoo image and installs it, downloads a portage package
-tree and finalizes theinstallation to boot a Gentoo based GNU/Linux operating
+This script is partitioning, formating partitions, downloading a Raspbian Linux
+Kernel, downloading a Gentoo image and installs it, downloads a portage package
+tree and finalizes the installation to boot a Gentoo based GNU/Linux operating
 system on a Raspberry Pi device.
 
 Just insert the SD card after creation into your Raspberry Pi and
-it will boot a Gentoo OS with a serial TTY enabled and SSH running. Sure, the
+it will boot a Gentoo OS with a serial TTY enabled and SSH running. Sure, there
 is some stuff to do but actually it works pretty well.
 
 This project based on the following documentation:
